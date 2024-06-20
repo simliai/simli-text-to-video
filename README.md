@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+# Simli Text To Video Sample Repo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This sample repository is meant as a guiding code in how to create secure a text to video application.
+There is a fastapi backend server that generates the audio using PlayHT but any audio provider can be used. The audio stream is passed to the frontend using a websocket endpoint. The stream is subsequently sent to **api.simli.ai**
+
+# How to run
+
+## Setup
+
+Install node dependencies
+```
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Setup python environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+cd server
+python3 -m venv .venv
+source .venv/bin/activate
+```
+Install dependencies
+```
+pip3 install -r requirements
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Environment variables
 
-## Learn More
+Add the following environment variables in the given `.env` file
 
-To learn more about Next.js, take a look at the following resources:
+```
+NEXT_PUBLIC_SIMLI_API_KEY=""
+playHT_API_KEY = ""
+playHT_USER_ID = ""
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Signup at [Play HT](https://play.ht/) for playHT_API_KEY and playHT_USER_ID
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Signup at [Simli.com](https://www.simli.com/) for Simli API Key
 
-## Deploy on Vercel
+## Running the Project
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run the frontend in one terminal
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+npm run dev
+```
+Run the server in one terminal
+
+```
+python3 server/server.py
+```
+
+**NOTES**
+
+The `server.py` reads from .env in the root directory, so make sure to run it from there.
