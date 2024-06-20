@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 export default function Home() {
 
   const [playing, setPlaying] = useState(false);
+
   const sentenceToSay = useRef("Hello from a realistic voice.");
 
   const simliFaceStreamRef = useRef<any>(null);
@@ -58,6 +59,7 @@ export default function Home() {
         ws.onclose = () => {
           console.log("Audio websocket closed");
         }
+        setPlaying(true);
       });
       
       
@@ -87,7 +89,7 @@ export default function Home() {
           sessionToken === "" ? ( 
             <div></div>
           ) : (
-            <SimliFaceStream ref={simliFaceStreamRef} start={true} sessionToken={sessionToken} minimumChunkSize={minimumChunkSizeState} />
+            <SimliFaceStream ref={simliFaceStreamRef} start={playing} sessionToken={sessionToken} minimumChunkSize={minimumChunkSizeState} />
           )
         }
           
