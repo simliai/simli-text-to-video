@@ -45,6 +45,7 @@ Signup at [Simli.com](https://www.simli.com/) for Simli API Key
 Run the frontend in one terminal
 
 ```
+npm run build
 npm run dev
 ```
 Run the server in one terminal
