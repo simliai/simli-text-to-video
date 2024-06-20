@@ -7,13 +7,14 @@ import { useRef, useState } from "react";
 export default function Home() {
 
   const [playing, setPlaying] = useState(false);
+  const sentenceToSay = useRef("Hello from a realistic voice.");
 
-  const simliFaceStreamRef = useRef(null);
+  const simliFaceStreamRef = useRef<any>(null);
   const [sessionToken, setSessionToken] = useState("");
   const [minimumChunkSizeState, setMinimumChunkSizeState] = useState(6);
   const [faceId, setFaceId] = useState("04d062bc-00ce-4bb0-ace9-76880e3987ec");
 
-  const StartAudioToVideoSession = async (faceId: string, isJPG: Boolean, syncAudio: Boolean) => {
+  const StartAudioToVideoSession = async (faceId: string, isJPG: Boolean, syncAudio: Boolean, infiniteLoop: Boolean = true) => {
     const metadata = {
       faceId: faceId,
       isJPG: isJPG,
@@ -43,6 +44,9 @@ export default function Home() {
         const ws = new WebSocket("ws://localhost:9000/audio");
         ws.onopen = () => {
           console.log("Connected to audio websocket");
+          
+          // const sentence = "Hello from a realistic voice."; // Replace with the actual sentence you want to send
+          ws.send(sentenceToSay.current);
         };
   
         ws.onmessage = (event) => {
@@ -51,17 +55,15 @@ export default function Home() {
             simliFaceStreamRef.current.sendAudioDataToLipsync(event.data);
           }
         };
+        ws.onclose = () => {
+          console.log("Audio websocket closed");
+        }
       });
       
       
     } catch (error) {
       console.log("Error websocket", error);  
     }
-    // StartAudioToVideoSession(faceId, true, true).then((response) => {
-    //   console.log("Session Token:", response);
-    //   setSessionToken(response.session_token);
-    //   setStart(true);
-    // });
   }
 
   const handlePause = () => {
@@ -90,6 +92,16 @@ export default function Home() {
         }
           
           <br />
+          {/* Input for sentence to play */}
+          <input
+            type="text"
+            onChange={(e) => { 
+              console.log(e.target.value);
+              sentenceToSay.current = e.target.value;
+             } }
+            className="border border-gray-300 rounded-lg p-2 w-[300px] m-2 text-black font-mono"
+            placeholder="Enter a sentence to play" 
+          />
           <button
             className={
               "hover:opacity-75 text-white font-bold py-2 w-[300px] px-4 rounded" +

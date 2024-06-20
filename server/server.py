@@ -30,14 +30,14 @@ playHT_API_KEY = os.getenv('playHT_API_KEY')
 playHT_USER_ID = os.getenv('playHT_USER_ID')
 
 # Generate audio using playHT and encode it using FFMPEG
-async def generateAndEncode(websocket):
+async def generateAndEncode(websocket, sentence):
     command = """
     curl -X POST \
         -H "Content-Type: application/json" \
         -H "accept: audio/mpeg" \
-        -H "AUTHORIZATION: playHT_API_KEY" \
-        -H "X-USER-ID: playHT_USER_ID" \
-        -d '{"text": "Hello from a realistic voice.","voice": "s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json","output_format": "mp3"}' \
+        -H "AUTHORIZATION: {playHT_API_KEY}" \
+        -H "X-USER-ID: {playHT_USER_ID}" \
+        -d '{"text": "{sentence_to_say}","voice": "s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json","output_format": "mp3"}' \
         "https://api.play.ht/api/v2/tts/stream" | ffmpeg \
         -nostdin \
         -v error \
@@ -47,8 +47,9 @@ async def generateAndEncode(websocket):
         -ar 16000 \
         -ac 1 pipe:1
     """
-    command = command.replace("playHT_API_KEY", playHT_API_KEY)
-    command = command.replace("playHT_USER_ID", playHT_USER_ID)
+    command = command.replace("{playHT_API_KEY}", playHT_API_KEY)
+    command = command.replace("{playHT_USER_ID}", playHT_USER_ID)
+    command = command.replace("{sentence_to_say}", sentence)
 
     process = await asyncio.create_subprocess_shell(
         command,
@@ -63,7 +64,8 @@ async def audio_stream(websocket: WebSocket):
     logger.info("Audio WebSocket connection established")
     await websocket.accept()
     try:
-        await generateAndEncode(websocket)
+        sentence = await websocket.receive_text()
+        await generateAndEncode(websocket, sentence)
     except WebSocketDisconnect:
         logger.info("Audio WebSocket disconnected")
     except Exception as e:
@@ -85,7 +87,10 @@ async def send(
         print("Sending bytes:",len(data))
         await websocket.send_bytes(data)
     print("Closing socket")
-    process.kill()
+    try:
+        process.kill()
+    except:
+        print("Process already killed")
     await process.wait()
     await websocket.close()
 
