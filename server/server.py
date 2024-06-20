@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 # Play.ht API key and user ID
 playHT_API_KEY = os.getenv('playHT_API_KEY')
 playHT_USER_ID = os.getenv('playHT_USER_ID')
+characterVoice = os.getenv('characterVoice')
 
 # Generate audio using playHT and encode it using FFMPEG
 async def generateAndEncode(websocket, sentence):
@@ -37,7 +38,7 @@ async def generateAndEncode(websocket, sentence):
         -H "accept: audio/mpeg" \
         -H "AUTHORIZATION: {playHT_API_KEY}" \
         -H "X-USER-ID: {playHT_USER_ID}" \
-        -d '{"text": "{sentence_to_say}","voice": "s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json","output_format": "mp3"}' \
+        -d '{"text": "{sentence_to_say}","voice": "{characterVoice}","output_format": "mp3"}' \
         "https://api.play.ht/api/v2/tts/stream" | ffmpeg \
         -nostdin \
         -v error \
@@ -50,6 +51,7 @@ async def generateAndEncode(websocket, sentence):
     command = command.replace("{playHT_API_KEY}", playHT_API_KEY)
     command = command.replace("{playHT_USER_ID}", playHT_USER_ID)
     command = command.replace("{sentence_to_say}", sentence)
+    command = command.replace("{characterVoice}", characterVoice)
 
     process = await asyncio.create_subprocess_shell(
         command,

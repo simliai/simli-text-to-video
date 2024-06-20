@@ -13,11 +13,11 @@ export default function Home() {
   const simliFaceStreamRef = useRef<any>(null);
   const [sessionToken, setSessionToken] = useState("");
   const [minimumChunkSizeState, setMinimumChunkSizeState] = useState(6);
-  const [faceId, setFaceId] = useState("04d062bc-00ce-4bb0-ace9-76880e3987ec");
 
-  const StartAudioToVideoSession = async (faceId: string, isJPG: Boolean, syncAudio: Boolean, infiniteLoop: Boolean = true) => {
+  const StartAudioToVideoSession = async (isJPG: Boolean, syncAudio: Boolean, infiniteLoop: Boolean = true) => {
+    
     const metadata = {
-      faceId: faceId,
+      faceId: process.env.NEXT_PUBLIC_CHARACTER_FACE_ID,
       isJPG: isJPG,
       apiKey: process.env.NEXT_PUBLIC_SIMLI_API_KEY,
       syncAudio: syncAudio,
@@ -39,7 +39,7 @@ export default function Home() {
 
   const handleStart = async () => {
     try {
-      StartAudioToVideoSession(faceId, true, true).then((response) => {
+      StartAudioToVideoSession(true, true).then((response) => {
         console.log("Session Token:", response);
         setSessionToken(response.session_token);
         const ws = new WebSocket("ws://localhost:9000/audio");

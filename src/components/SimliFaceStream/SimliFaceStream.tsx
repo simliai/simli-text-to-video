@@ -357,8 +357,10 @@ import React, {
       const sendSilence = () => {
         // 1068 bytes is the size of 1 audio sample chunk
         const silence = new Uint8Array(1068 * minimumChunkSize);
-        ws.current?.send(silence);
-        console.log('Sending silence!');
+        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+            ws.current?.send(silence);
+            console.log('Sending silence!');
+        }
       };
   
       return <canvas ref={canvasRef} width='512' height='512'></canvas>;
