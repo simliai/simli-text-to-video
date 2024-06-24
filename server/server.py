@@ -92,9 +92,13 @@ async def send(
     silence = b'\x00' * 4096  # 1024 bytes of silence
     try:
         while True:
+
             await websocket.send_bytes(silence)
-            # Sleep for 33msms
-            await asyncio.sleep(0.033)
+            # How long to sleep
+            # Bytes per second=Sample rate × Bytes per sample × Number of channels
+            # Duration in seconds= Number of bytes / bytes per second
+
+            await asyncio.sleep(0.128)
     except:
         print("Socket closed")
     
