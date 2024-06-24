@@ -57,20 +57,20 @@ import React, {
         useState<CanvasRenderingContext2D | null>(null);
       const frameInterval = 33.375; // Time between frames in milliseconds
   
-      useEffect(() => {
-        setInterval(() => {
-          const timeDifference = performance.now() - silenceTime.current;
-          if (
-            isSilent.current === true &&
-            silenceTime !== null &&
-            timeDifference > frameInterval * minimumChunkSize
-          ) {
-            console.log('Time difference:', timeDifference, 'ms');
-            sendSilence();
-            silenceTime.current = performance.now();
-          }
-        }, 10);
-      }, []);
+      // useEffect(() => {
+      //   setInterval(() => {
+      //     const timeDifference = performance.now() - silenceTime.current;
+      //     if (
+      //       isSilent.current === true &&
+      //       silenceTime !== null &&
+      //       timeDifference > frameInterval * minimumChunkSize
+      //     ) {
+      //       console.log('Time difference:', timeDifference, 'ms');
+      //       sendSilence();
+      //       silenceTime.current = performance.now();
+      //     }
+      //   }, 10);
+      // }, []);
   
       const handlePCMPlayerOnstart = () => {
         // Start recording silence time

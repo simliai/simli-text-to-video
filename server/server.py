@@ -88,11 +88,23 @@ async def send(
             break
         print("Sending bytes:",len(data))
         await websocket.send_bytes(data)
-    print("Closing socket")
+
+    silence = b'\x00' * 4096  # 1024 bytes of silence
+    try:
+        while True:
+            await websocket.send_bytes(silence)
+            # Sleep for 33msms
+            await asyncio.sleep(0.033)
+    except:
+        print("Socket closed")
+    
     try:
         process.kill()
     except:
         print("Process already killed")
+    
+    print("Closing socket")
+    
     await process.wait()
     await websocket.close()
 
